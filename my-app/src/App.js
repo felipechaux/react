@@ -28,6 +28,20 @@ class App extends Component {
     })
   }
 
+  removeTask(index){
+    console.log(index);
+    if(window.confirm('Are you sure you want to delete it?')){
+      this.setState({
+        tasks:this.state.tasks.filter((e,i)=>{
+          return i !== index
+        })
+      })
+
+    }
+
+
+  }
+
   render() {
     console.log("render");
     console.log(this.state.tasks)
@@ -44,6 +58,13 @@ class App extends Component {
              <div className="card-body">
                 <p> {task.descripcion}</p>
                 <p><mark> {task.responsable}</mark></p>
+             </div>
+             <div className="card-footer">
+               <button className="btn btn-danger"
+                       onClick={this.removeTask.bind(this,i)}
+                       >
+                   Delete
+                </button>
              </div>
           </div>
         </div>
