@@ -52,7 +52,7 @@ console.log("agregar nota app -> "+note);
  //  });
   //actualizar estado
  //this.setState({notes});
-  this.db.push().set({noteContent:note});
+  this.db.push().set({});
 
 }
 
