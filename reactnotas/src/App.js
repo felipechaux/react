@@ -18,16 +18,19 @@ constructor(){
     ]
   };
 
-  this.app=firebase.initializeApp(DB_CONFIG);
-  this.db=this.app.database().ref().child('notes');
-
-
+  
   this.addNote = this.addNote.bind(this);
+  this.removeNote=this.removeNote.bind(this);
+
+  //conexion db
+  this.app=firebase.initializeApp(DB_CONFIG);
+  this.db=this.app.database().ref().child('notes')
 
 }
 
 componentDidMount(){
    const { notes }= this.state;
+
    this.db.on('child_added',snap =>{
      notes.push({
        noteId:snap.key,
@@ -36,11 +39,22 @@ componentDidMount(){
      this.setState({notes});
    });
 
+
+   this.db.on('child_removed', snap => {
+    for(let i = 0; i < notes.length; i++) {
+      if(notes[i].noteId === snap.key) {
+        notes.splice(i , 1);
+      }
+    }
+    console.log(notes);
+    this.setState({notes});
+  });
+
+
+
 }
 
-removeNote(){
 
-}
 
 addNote(note){
 console.log("agregar nota app -> "+note);
@@ -52,8 +66,13 @@ console.log("agregar nota app -> "+note);
  //  });
   //actualizar estado
  //this.setState({notes});
-  this.db.push().set({});
+ this.db.push().set({noteContent: note});
 
+
+}
+
+removeNote(noteId){
+  this.db.child(noteId).remove();
 }
 
 
@@ -61,17 +80,19 @@ console.log("agregar nota app -> "+note);
     return (
       <div className="notesContainer">
          <div className="notesHeader">
-            <h1>react y firebase app</h1>
+            <h1>React Notes</h1>
          </div>
          <div className="notesBody">
            <ul>
             {
               this.state.notes.map(note =>{
                 return(
+                 
                   <Note
                   noteContent={note.noteContent}
                   noteId={note.noteId}
                   key={note.noteId}
+                  removeNote={this.removeNote}
                    />
                  )
               })
